@@ -55,23 +55,23 @@ pipeline {
             }
         }
 
-        stage('Deploy to Staging') {
-            steps {
-                bat 'robocopy publish "C:\\Users\\MUHADH\\Desktop\\Devops\\DevopsAsssesment\\staging" /MIR'
-            }
-        }
+        stage('Deploy to Dev') {
+    steps {
+        bat 'robocopy publish "C:\\Users\\MUHADH\\Desktop\\Devops\\DevopsAsssesment\\dev" /MIR /NFL /NDL /NJH /NJS /NC /NS /NP /R:0 /W:0 || exit 0'
+    }
+}
 
-        stage('Approval for Production') {
-            steps {
-                input message: 'Approve deployment to Production?', ok: 'Deploy'
-            }
-        }
+stage('Deploy to Staging') {
+    steps {
+        bat 'robocopy publish "C:\\Users\\MUHADH\\Desktop\\Devops\\DevopsAsssesment\\staging" /MIR /NFL /NDL /NJH /NJS /NC /NS /NP /R:0 /W:0 || exit 0'
+    }
+}
 
-        stage('Deploy to Production') {
-            steps {
-                bat 'robocopy publish "C:\\Users\\MUHADH\\Desktop\\Devops\\DevopsAsssesment\\prod" /MIR'
-            }
-        }
+stage('Deploy to Production') {
+    steps {
+        bat 'robocopy publish "C:\\Users\\MUHADH\\Desktop\\Devops\\DevopsAsssesment\\prod" /MIR /NFL /NDL /NJH /NJS /NC /NS /NP /R:0 /W:0 || exit 0'
+    }
+}
     }
 
     post {
