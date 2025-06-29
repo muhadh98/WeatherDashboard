@@ -21,7 +21,7 @@ pipeline {
                 bat 'dotnet build WeatherDashboard.sln --configuration Release'
             }
         }
-        stage(Run Tests') {
+        stage('Run Tests') {
             steps {
                 bat 'dotnet test WeatherDashboard.Tests/WeatherDashboard.Tests.csproj --logger "trx;LogFileName=TestResults.xml"'
             }
