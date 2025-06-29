@@ -1,0 +1,6 @@
+@WeatherDashboard_HostAddress = http://localhost:5138
+
+GET {{WeatherDashboard_HostAddress}}/api/Weather/Colombo
+Accept: application/json
+
+###
