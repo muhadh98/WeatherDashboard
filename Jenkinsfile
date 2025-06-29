@@ -1,45 +1,70 @@
 pipeline {
     agent any
+
+    environment {
+        DOTNET_CLI_TELEMETRY_OPTOUT = '1'
+        DOTNET_SKIP_FIRST_TIME_EXPERIENCE = '1'
+    }
+
     stages {
-        stage('Get Code') {
+        stage('Checkout') {
             steps {
                 git url: 'https://github.com/muhadh98/WeatherDashboard.git', branch: 'main'
             }
         }
-        stage('Clean') {
-            steps {
-                bat 'dotnet clean WeatherDashboard.sln'
-            }
-        }
-        stage('Get Packages') {
+        stage('Restore') {
             steps {
                 bat 'dotnet restore WeatherDashboard.sln'
             }
         }
-        stage('Build App') {
+        stage('Build') {
             steps {
-                bat 'dotnet build WeatherDashboard.sln --configuration Release'
+                bat 'dotnet build WeatherDashboard.sln --configuration Release --no-restore'
             }
         }
-        stage('Run Tests') {
+        stage('Test') {
             steps {
-                bat 'dotnet test WeatherDashboard.Tests/WeatherDashboard.Tests.csproj --logger "trx;LogFileName=TestResults.xml"'
+                bat 'dotnet test WeatherDashboard.Tests/WeatherDashboard.Tests.csproj --logger "trx;LogFileName=TestResults.xml" --results-directory TestResults --no-build'
             }
         }
-        stage('Publish Test Results') {
+        stage('Code Analysis') {
             steps {
-                junit '**/TestResults/*.xml'
+                echo 'Code analysis step (add your tool, e.g., SonarQube, here)'
+                // Example: bat 'dotnet sonarscanner begin ...'
             }
         }
-        stage('Prepare Files') {
+        stage('Security Scan') {
             steps {
-                bat 'dotnet publish WeatherDashboard/WeatherDashboard.csproj --configuration Release --output publish'
+                echo 'Security scan step (add your tool, e.g., Snyk, here)'
+                // Example: bat 'snyk test'
             }
         }
-        stage('Save Files') {
+        stage('Publish') {
             steps {
-                archiveArtifacts artifacts: 'publish/**', allowEmptyArchive: true
+                bat 'dotnet publish WeatherDashboard/WeatherDashboard.csproj --configuration Release --output publish --no-build'
+            }
+        }
+        stage('Deploy to Dev') {
+            steps {
+                bat 'robocopy publish "C:\\Users\\MUHADH\\Desktop\\Devops\\DevopsAsssesment\\dev" /MIR'
+            }
+        }
+        stage('Deploy to Staging') {
+            steps {
+                bat 'robocopy publish "C:\\Users\\MUHADH\\Desktop\\Devops\\DevopsAsssesment\\staging" /MIR'
+            }
+        }
+        stage('Deploy to Production') {
+            steps {
+                bat 'robocopy publish "C:\\Users\\MUHADH\\Desktop\\Devops\\DevopsAsssesment\\prod" /MIR'
             }
         }
     }
-}
+
+    post {
+        always {
+            junit 'WeatherDashboard.Tests/TestResults/*.xml'
+            archiveArtifacts artifacts: 'publish/**', allowEmptyArchive: false
+            cleanWs()
+        }
+    }
