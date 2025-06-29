@@ -1,11 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        DOTNET_CLI_TELEMETRY_OPTOUT = '1'
-        DOTNET_SKIP_FIRST_TIME_EXPERIENCE = '1'
-    }
-
     stages {
         stage('Checkout') {
             steps {
@@ -28,18 +23,6 @@ pipeline {
         stage('Test') {
             steps {
                 bat 'dotnet test WeatherDashboard.Tests/WeatherDashboard.Tests.csproj --logger "trx;LogFileName=TestResults.xml" --results-directory WeatherDashboard.Tests\\TestResults'
-            }
-        }
-
-        stage('Code Analysis') {
-            steps {
-                echo 'Code analysis step (add your tool, e.g., SonarQube, here)'
-            }
-        }
-
-        stage('Security Scan') {
-            steps {
-                echo 'Security scan step (add your tool, e.g., Snyk, here)'
             }
         }
 
@@ -66,27 +49,11 @@ pipeline {
                 bat 'robocopy publish "C:\\Users\\MUHADH\\Desktop\\Devops\\DevopsAsssesment\\prod" /MIR /NFL /NDL /NJH /NJS /NC /NS /NP /R:0 /W:0 || exit 0'
             }
         }
-
-        stage('Verify Test Results') {
-            steps {
-                // Check if the test results exist and list them
-                bat 'dir WeatherDashboard.Tests\\TestResults\\*.xml'
-            }
-        }
     }
 
     post {
-        always {
-            // Use the exact path to test results
-            junit 'WeatherDashboard.Tests/TestResults/*.xml'
-            archiveArtifacts artifacts: 'publish/**', allowEmptyArchive: false
-            cleanWs()
-        }
-
-        failure {
-            script {
-                echo "Build failed. Email notification skipped due to mail configuration issue."
-            }
+        success {
+            echo 'Build succeeded!'
         }
     }
 }
