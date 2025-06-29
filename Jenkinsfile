@@ -27,7 +27,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                bat 'dotnet test WeatherDashboard.Tests/WeatherDashboard.Tests.csproj --logger "trx;LogFileName=TestResults.xml" --results-directory WeatherDashboard.Tests/TestResults'
+                bat 'dotnet test WeatherDashboard.Tests/WeatherDashboard.Tests.csproj --logger "trx;LogFileName=TestResults.xml" --results-directory WeatherDashboard.Tests\\TestResults'
             }
         }
 
@@ -66,10 +66,18 @@ pipeline {
                 bat 'robocopy publish "C:\\Users\\MUHADH\\Desktop\\Devops\\DevopsAsssesment\\prod" /MIR /NFL /NDL /NJH /NJS /NC /NS /NP /R:0 /W:0 || exit 0'
             }
         }
+
+        stage('Verify Test Results') {
+            steps {
+                // Check if the test results exist and list them
+                bat 'dir WeatherDashboard.Tests\\TestResults\\*.xml'
+            }
+        }
     }
 
     post {
         always {
+            // Use the exact path to test results
             junit 'WeatherDashboard.Tests/TestResults/*.xml'
             archiveArtifacts artifacts: 'publish/**', allowEmptyArchive: false
             cleanWs()
