@@ -30,13 +30,11 @@ pipeline {
         stage('Code Analysis') {
             steps {
                 echo 'Code analysis step (add your tool, e.g., SonarQube, here)'
-                // Example: bat 'dotnet sonarscanner begin ...'
             }
         }
         stage('Security Scan') {
             steps {
                 echo 'Security scan step (add your tool, e.g., Snyk, here)'
-                // Example: bat 'snyk test'
             }
         }
         stage('Publish') {
@@ -54,6 +52,11 @@ pipeline {
                 bat 'robocopy publish "C:\\Users\\MUHADH\\Desktop\\Devops\\DevopsAsssesment\\staging" /MIR'
             }
         }
+        stage('Approval for Production') {
+            steps {
+                input message: 'Approve deployment to Production?', ok: 'Deploy'
+            }
+        }
         stage('Deploy to Production') {
             steps {
                 bat 'robocopy publish "C:\\Users\\MUHADH\\Desktop\\Devops\\DevopsAsssesment\\prod" /MIR'
@@ -67,7 +70,10 @@ pipeline {
             archiveArtifacts artifacts: 'publish/**', allowEmptyArchive: false
             cleanWs()
         }
+        failure {
+            mail to: 'mohommedmuhardh2233@gmail..com',
+                 subject: "Jenkins Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                 body: "Check Jenkins for details: ${env.BUILD_URL}"
+        }
     }
-
 }
-
