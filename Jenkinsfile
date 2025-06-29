@@ -61,12 +61,6 @@ pipeline {
             }
         }
 
-        stage('Approval for Production') {
-            steps {
-                input message: 'Approve deployment to Production?', ok: 'Deploy'
-            }
-        }
-
         stage('Deploy to Production') {
             steps {
                 bat 'robocopy publish "C:\\Users\\MUHADH\\Desktop\\Devops\\DevopsAsssesment\\prod" /MIR /NFL /NDL /NJH /NJS /NC /NS /NP /R:0 /W:0 || exit 0'
@@ -84,7 +78,6 @@ pipeline {
         failure {
             script {
                 echo "Build failed. Email notification skipped due to mail configuration issue."
-                // You can add email config later if needed
             }
         }
     }
