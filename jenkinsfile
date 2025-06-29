@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Get Code') {
             steps {
-                git url: 'https://github.com/muhadh98/WeatherDashboard.git', branch: 'my-dev-branch'
+                git url: 'https://github.com/muhadh98/WeatherDashboard.git', branch: 'main'
             }
         }
         stage('Clean') {
