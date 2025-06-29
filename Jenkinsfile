@@ -24,7 +24,7 @@ pipeline {
         }
         stage('Test') {
             steps {
-                bat 'dotnet test WeatherDashboard.Tests/WeatherDashboard.Tests.csproj --logger "trx;LogFileName=TestResults.xml" --results-directory TestResults --no-build'
+                bat 'dotnet test WeatherDashboard.Tests/WeatherDashboard.Tests.csproj --logger "trx;LogFileName=TestResults.xml" --results-directory WeatherDashboard.Tests/TestResults'
             }
         }
         stage('Code Analysis') {
@@ -68,4 +68,3 @@ pipeline {
             cleanWs()
         }
     }
-}
